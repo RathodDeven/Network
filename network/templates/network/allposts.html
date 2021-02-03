@@ -1,0 +1,93 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div style="margin: 20px;">
+    <h1>All Posts</h1>
+    <h3>Create a New Post</h3>
+    <form action="{%url 'allposts' %}" method="POST">
+        {%csrf_token%}
+        <div style="width: 400px;" class="form-floating"><textarea name="content" id="content" placeholder="Create a Post"  class="form-control" ></textarea>
+        </div>
+        <br>
+        <input type="submit" class="btn btn-primary" value="POST">
+    </form>
+    <br>
+    <br>
+    <div style="display: flex;flex-direction: row;flex-wrap: wrap;"> 
+    {%for post in page_obj%}
+    <div class="card" style="width: 18rem;margin: 10px;">
+        <div class="card-body">       
+             <div class="card-title"><a href="{%url 'user' post.poster.id%}"><strong>{{post.poster}}</strong></a></div>
+             <div class="card-subtitle mb-2 text-muted">on {{post.timestamp}}</div>
+             <div class="card-text">{{post.content}}</div><br>
+        <div id="like-content-{{post.id}}">&#10084; {{post.likes}}</div>
+        <button class="like"  id="like-btn-{{post.id}}" data-id="{{post.id}}" data-likes="{{post.likes}}"value="Like">Like</button>
+        <br>
+    </div>
+    </div>
+
+    {%empty%}
+    <h3>NO Posts</h3>
+    {%endfor%}
+</div>
+    <br>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+
+            {%if page_obj.has_previous%}
+          <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}">Previous</a></li>
+          {%endif%}
+          <li class="page-item"><div class="page-link">{{page_obj.number}}/{{page_obj.paginator.num_pages}}</div></li>
+          {%if page_obj.has_next%}
+          <li class="page-item"><a class="page-link" href="?page={{page_obj.next_page_number}}">Next</a></li>
+            {%endif%}
+        </ul>
+      </nav>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded",function(){
+            document.querySelectorAll(".like").forEach((element)=>{
+                element.addEventListener("click",()=>{
+                    id = parseInt(element.getAttribute("data-id"));
+                    likes = element.getAttribute("data-likes");
+                    like_content = document.querySelector(`#like-content-${id}`);
+                    status_value = element.value;
+                    if(status_value == "UnLike"){
+                        var updated_likes = parseInt(likes) - 1;
+                        like_content.innerHTML = `&#10084; ${updated_likes}`;
+
+                        fetch(`/like/${id}`,{
+                            method: "PUT",
+                            body: JSON.stringify({
+                            status: status_value,
+                            }),
+                        });
+                        element.setAttribute("data-likes",`${updated_likes}`);
+
+                        element.value = "Like";
+                        element.innerHTML = "Like";
+                    
+                    }else{
+                        var updated_likes = parseInt(likes) + 1;
+                        like_content.innerHTML = `&#10084; ${updated_likes}`;
+        
+                        fetch(`/like/${id}`,{
+                            method: "PUT",
+                            body: JSON.stringify({
+                            status: status_value,
+                            }),
+                        });
+                        element.setAttribute("data-likes",`${updated_likes}`);
+                        element.value = "UnLike";
+                        element.innerHTML = "UnLike";
+
+                    }
+                });
+            });
+        });
+        
+
+    </script>
+{% endblock %}

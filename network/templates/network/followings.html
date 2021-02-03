@@ -1,0 +1,32 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<h1>Post by followings </h1>
+
+       {%for post in page_obj%}
+       <div style="margin: 20px;">
+        <div><a href="{%url 'user' post.poster.id%}"><strong>{{post.poster}}</strong></a></div>
+        <div>{{post.content}}</div>
+        <div>{{post.timestamp}}</div>
+        <div>&#10084; {{post.likes}}</div>
+        <br>
+        </div>
+       {%empty%}
+       <div style="margin: 20px;">No post by the person he is following.</div>
+       {%endfor%}
+
+       <br>
+       <nav aria-label="Page navigation example">
+           <ul class="pagination">
+               
+               {%if page_obj.has_previous%}
+             <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}">Previous</a></li>
+             {%endif%}
+             <li class="page-item"><div class="page-link">{{page_obj.number}}/{{page_obj.paginator.num_pages}}</div></li>
+             {%if page_obj.has_next%}
+             <li class="page-item"><a class="page-link" href="?page={{page_obj.next_page_number}}">Next</a></li>
+               {%endif%}
+           </ul>
+         </nav>
+
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div style="margin: 20px;">
+            <h1>{{username}}</h1>
+    <br>
+    <div><strong>{{num_followers}}</strong>  <a href="{%url 'followers' user_id%}">Followers</a></div>
+    <div><strong>{{num_followings}}</strong> <a href="{%url 'followings' user_id%}">Followings</a></div>
+    <br>
+    {%if not self%}
+    {%if following%}
+    <a href="{%url 'unfollow' user_id %}"> <button id="unfollow">UnFollow</button></a><br>
+    {%else%}
+    <a href="{%url 'follow' user_id %}"><button id="follow">Follow</button></a><br>
+    {%endif%}
+    {%endif%}
+    <br>
+    <div>
+        {%for post in page_obj%}
+    <div>
+        <div><a href="{%url 'user' post.poster.id%}"><strong>{{post.poster}}</strong></a></div>
+        <div id="content-{{post.id}}">{{post.content}}</div>
+        {%if user == post.poster%}
+        <div><button id="edit-btn-{{post.id}}" class="edit-btns" data-id="{{post.id}}">Edit</button></div>
+        <div id="edit-content-{{post.id}}" style="display: none;" data-id="{{post.id}}">
+            <textarea name="edit-post" id="edit-text-{{post.id}}" cols="30" rows="10">{{post.content}}</textarea>
+            <br>
+            <button id="save-btn-{{post.id}}" data-id="{{post.id}}">Save</button>
+        </div>
+        {%endif%}
+        
+    </div>
+        <div>{{post.timestamp}}</div>
+        <div>&#10084; {{post.likes}}</div>
+        <br>
+    </div>
+
+    {%empty%}
+    <h3>NO Posts</h3>
+
+
+    {%endfor%}
+
+    </div>
+    <br>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {%if page_obj.has_previous%}
+          <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}">Previous</a></li>
+          {%endif%}
+          <li class="page-item"><div class="page-link">{{page_obj.number}}/{{page_obj.paginator.num_pages}}</div></li>
+          {%if page_obj.has_next%}
+          <li class="page-item"><a class="page-link" href="?page={{page_obj.next_page_number}}">Next</a></li>
+            {%endif%}
+        </ul>
+      </nav>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded",function(){
+        edit = document.querySelectorAll(".edit-btns");
+        edit.forEach((element) => {
+            element.addEventListener("click",()=>{
+                id = element.getAttribute("data-id");
+                content = document.querySelector(`#content-${id}`);
+                edit_btn = document.querySelector(`#edit-btn-${id}`);
+                edit_content = document.querySelector(`#edit-content-${id}`);
+                edited_text = document.querySelector(`#edit-text-${id}`);
+
+                content.style.display = "none";
+                edit_btn.style.display = "none";
+                edit_content.style.display = "block";
+                document.querySelector(`#save-btn-${id}`).addEventListener("click",()=>{
+
+                    fetch(`/post/${id}`,{
+                        method: "PUT",
+                        body: JSON.stringify({
+                            content: edited_text.value,
+                        }),
+                    });
+                    content.innerHTML = edited_text.value;
+                    content.style.display = "block";
+                    edit_btn.style.display = "block";
+                    edit_content.style.display = "none";
+                    
+                });
+            });
+            
+        });
+
+    });
+   
+</script>
+{% endblock %}

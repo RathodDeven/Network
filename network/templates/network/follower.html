@@ -1,0 +1,14 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<h1>Followers List:</h1>
+<ul>
+    {%for person in people%}
+
+    <li><a href="{%url 'user' person.id%}">{{person.username}}</a></li>
+    {%empty%}
+    <h3>No Followers</h3>
+
+    {%endfor%}
+</ul>
+{% endblock %}
