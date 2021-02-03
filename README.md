@@ -2,7 +2,7 @@
 
 ITs a simple and basic Social Media, where you can post , comment on posts,edit post , follow other users and be followed by other users.
 
-### Requirement and Proceure to Runserver
+### Requirement and Procedure to Runserver
 
 -> If have not installed Django already then intall it by using command "pip install django" in terminal.
 
