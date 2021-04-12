@@ -13,7 +13,10 @@ from .models import *
 
 
 def index(request):
-    return render(request, "network/index.html")
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+    else:
+        return HttpResponseRedirect(reverse("allposts"))
 
 
 def login_view(request):
