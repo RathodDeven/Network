@@ -8,7 +8,6 @@ ITs a simple and basic Social Media, where you can post , comment on posts,edit 
 
 -> Then go to the directory /Network and type command "python manage.py makemigrations".
 
--> Then type command "python manage.py makemigratons".
 
 -> All set now you can Start server by typing "python manage.py runserver".
 
